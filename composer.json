@@ -1,0 +1,30 @@
+{
+    "name": "petrelli/search-interface-builder",
+    "description": "Build and manage search categories and links easily, including all url's and their respective states",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+      "controller",
+      "filters",
+      "scoped",
+      "scopes",
+      "interface",
+      "build"
+    ],
+    "authors": [
+        {
+            "name": "Fernando Petrelli",
+            "email": "contact@fernandopetrelli.com"
+        }
+    ],
+    "require": {
+      "php": "^7.0",
+      "laravel/framework": "5.*"
+    },
+    "autoload": {
+      "psr-4": {
+        "Petrelli\\SearchInterfaceBuilder\\": "src/",
+      }
+    },
+    "minimum-stability": "stable"
+}

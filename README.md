@@ -54,7 +54,7 @@ composer require petrelli/search-interface-builder
 Or add:
 
 ```
-"petrelli/search-interface-builder": "0.0.*"
+"petrelli/search-interface-builder": "^0.0.2@alpha"
 ```
 
 And run `composer update`.

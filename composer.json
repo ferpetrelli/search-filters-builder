@@ -23,7 +23,7 @@
     },
     "autoload": {
       "psr-4": {
-        "Petrelli\\SearchInterfaceBuilder\\": "src/",
+        "Petrelli\\SearchInterfaceBuilder\\": "src/"
       }
     },
     "minimum-stability": "stable"

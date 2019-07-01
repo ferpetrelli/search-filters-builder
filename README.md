@@ -152,6 +152,10 @@ Here you need to define 3 things:
 
 * `values()`: array of `['value' => 'label', ...]` elements. You can load these values from the database, an API, hardcoded, etc.
 
+Optional:
+
+* `$separator`: character used to separate values on the URL. By defaut is `,`.
+
 
 Let's create the sorter:
 

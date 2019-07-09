@@ -1,0 +1,33 @@
+<?php
+
+namespace App\Filters\Sections;
+
+use \Petrelli\SearchInterfaceBuilder\BaseSection;
+
+
+class {{className}} extends BaseSection
+{
+
+
+	protected $route = '{{routeName}}';
+
+
+	/**
+	 *
+	 * Filters classes to be processed.
+	 *
+	 */
+	protected $filters = [
+		// \App\Filters\Definitions\FilterName::class,
+	];
+
+
+	/**
+	 *
+	 * Sorter class
+	 *
+	 */
+	protected $sorter = null;
+
+
+}

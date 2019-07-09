@@ -1,24 +1,19 @@
 # Search Interface Builder
 
-With this package you will be able to easily build and manage your search filters.
+Build and maintain filters for your listings.
 
-![A section](/docs/images/selected.png "Section")
+Everything will be automatically managed. URL's, Values, Labels, etc. by just defining a few classes.
 
-You will be provided with helpers to show different filter sections, select/deselect links, and more, all just by defining a few classes.
+# Live Example
 
-# One example is worth a thousand words
+Please [visit here](https://fernandopetrelli.com/filters) and click around.
 
-Please check out [a very simple example](https://fernandopetrelli.com/filters) to illustrate the main funtionalities.
-
-To perform an actual search, you can use it together with [Scoped Controller](https://github.com/ferpetrelli/scoped-controller) to trigger scope calls. This way your controller and your views will always be decluttered.
-
-The complete view for this example is a few dozen lines:
+The complete view for this example is a just few lines:
 
 ```php
 @foreach ($filtering->filters() as $filter)
     <div>
         <h4>{{ $filter->label() }}</h4>
-
         @foreach($filter->links() as $option)
             <a href="{{$option->url}}" @if($option->active) class="active" @endif>
                 {{ $option->label }}
@@ -30,17 +25,30 @@ The complete view for this example is a few dozen lines:
 @if ($filtering->activeFilters()->isNotEmpty())
     <div>
         <h4>Selected filters:</h4>
-
         @foreach($filtering->activeFilters() as $option)
             <a href="{{$option->url}}">{{ $option->label }}</a>
         @endforeach
-
         <a href="{!! route('filters') !!}">Clear all</a>
     </div>
 @endif
 ```
 
 The entire logic to build all URL's is managed automatically by our Sections and Filters classes.
+
+
+# Performing an actual search
+
+The way an actual search is triggered on your data sources is entirely up to you.
+
+This package will provide you with a simple and flexible way to build your filters and sorters, but connecting the generated URL's will depend on your application.
+
+## Executing scopes
+
+To close this gap, I recommend using the [Scoped Controller](https://github.com/ferpetrelli/scoped-controller) package.
+
+It's solely functionality is to execute scopes over your query builders depending on your URL's, which makes it a perfect fit.
+
+Your controllers and views will always be decluttered this way.
 
 
 # Installation
@@ -59,64 +67,66 @@ Or add:
 
 And run `composer update`.
 
+## Service provider
+
+Only if you have disabled Laravel's auto-discover, you'll have to manually add the service provider to your `config/app.php` file.
+
+```php
+'providers' => [
+    //...
+    Petrelli\SearchInterfaceBuilder\ServiceProvider::class,
+    //...
+]
+```
 
 # Important Concepts
 
-
 ## Section
 
-A section is a collection of possible filters and/or a sorter. You can define as many sections as you need for your application.
+A section is a collection of filters and/or a sorter. You can define as many sections as you want.
 
 ![A section](/docs/images/bar.png "Section")
 
 
 ## Filter
 
-A Filter is a specific category to be used to filter your collection (for example, Location and Department on the previous image).
+A Filter is a specific category to filter your collection (for example, Department and Location on the previous image).
 
 You can reutilize filters across your sections.
 
 
 # Directory structure
 
-I recommend placing all classes under `app/Filters`
+By default everything will be located under `App/Filters`.
 
-![A section](/docs/images/sections.png "Section")
+* `App/Filters/Definitions`: Filters classes and sorters (Location, Year, ByPrice, etc.).
+* `App/Filters/Sections`: Main search, staff search, events search, etc.
 
-
-* `app/Filters/Definitions`: Here place all of your filters classes (Location, Year, Department, etc.). This way you will be able to reutilize these definitions in any section that needs them.
-* `app/Filters/Sections`: Here place all of your sections (main search, staff search, events search, etc.)
 
 # Usage
 
 ## 1. Create a new empty Section.
 
-Be sure to inherit from `Petrelli\SearchInterfaceBuilder\BaseSection`
-
-```php
-
-namespace App\Filters\Sections;
-
-class StaffFiltering extends Petrelli\SearchInterfaceBuilder\BaseSection
-{
-
-    protected $route = 'staff';
-
-    protected $filters = [];
-
-    protected $sorter;
-
-}
-
+```
+php artisan search-builder:section [name] [route.name?]
 ```
 
-## 2. Create Filters for that section.
+This will generate a new Section class inside `App\Filters\Sections`.
+
+If you don't specify a route please open the generated file and update it.
 
 
-Following our image, let's create the Location filter (creating the Department filter is the same process).
+## 2.1 Create Filters
+
+
+```
+php artisan search-builder:filter [name]
+```
+
+This will generate a new Filter class inside `App\Filters\Definitions`.
+
 
 ```php
-
 namespace App\Filters\Definitions;
 
 class Location extends Petrelli\SearchInterfaceBuilder\MultipleSelector
@@ -130,21 +140,19 @@ class Location extends Petrelli\SearchInterfaceBuilder\MultipleSelector
     public function values()
     {
 
+        //... Always return a [value => label ...] associative array
         return [
             'ny' => __('New York'),
             'nb' => __('Nairobi'),
             'fr' => __('France'),
-            //... Add all options
         ];
 
     }
 
-
 }
-
 ```
 
-Here you need to define 3 things:
+Here you can adjust 3 things:
 
 * `$parameter`: The URL parameter to be used for this filter.
 
@@ -157,41 +165,19 @@ Optional:
 * `$separator`: character used to separate values on the URL. By defaut is `,`.
 
 
-Let's create the sorter:
-
-```php
-
-namespace App\Filters\Definitions;
-
-class SortStaff extends Petrelli\SearchInterfaceBuilder\SingleSelector
-{
-
-    protected $parameter = 'sort_by';
-
-    protected $label     = 'Sory By';
+## 2.2 Create a Sorter (optional)
 
 
-    public function values()
-    {
+A sorter is actually a filter, so the step to create it is the same as `2.1`.
 
-        return [
-            'name' => __('Name A-Z'),
-            'name_desc' => __('Name Z-A'),
-        ];
+The only difference is that we should only allow one selected option at a time.
 
-    }
-
-
-}
-
-```
-
-A sorter is actually a filter, only that we should always inherit from `SingleSelector` instead of a `MultipleSelector` to allow only one option selected at a time.
-
-Of course you can also create filters from `SingleSelector`. (Year, in our live example link).
+To acomplish this you have to inherit from `SingleSelector` instead of a `MultipleSelector`.
 
 
 ## 3. Add those filters to the section
+
+The following example Section contains two filters (Department and Location), and a sorter (SortStaff).
 
 ```php
 
@@ -219,7 +205,7 @@ class StaffFiltering extends Petrelli\SearchInterfaceBuilder\BaseSection
 
 ```
 
-## 4. That's it, now just use the Section object in your view
+## 4. Use the Section object in your view
 
 From the controller we send the object to the view:
 
@@ -231,7 +217,10 @@ return view('staff.index', [
 
 ```
 
-### Print filter titles
+And from them we can print everything in our views.
+
+
+## Usage: Print filter titles
 
 Used to print the names of each filter to build the top section:
 
@@ -244,7 +233,7 @@ Used to print the names of each filter to build the top section:
 @endforeach
 ```
 
-### Print all filter options
+## Usage: Print all filter options
 
 Here we print each one of the options:
 
@@ -263,7 +252,7 @@ Here we print each one of the options:
 @endforeach
 ```
 
-Each option object will contain the following attributes:
+Each option object contains the following attributes:
 
 ```php
 $option->label   // Label
@@ -275,9 +264,11 @@ $option->url     // URL that contains or not the value depending if it's active 
 
 For 99% of use cases you will only have to use `url`, `active`, and `label`.
 
-### Print a list of currently selected filters
+## Usage: Print a list with the selected filters
 
 ![A section](/docs/images/selected-list.png "Section")
+
+As you will see at the live example after selecting a few filters, that list can be automatically generated.
 
 ```php
 @if ($filters->activeFilters()->isNotEmpty())
@@ -292,10 +283,32 @@ For 99% of use cases you will only have to use `url`, `active`, and `label`.
 
 This list will include all selected options within all filters.
 
+## Usage: Create a filter that allows only one selected element
+
+To acomplish this you have to inherit from `SingleSelector` instead of `MultipleSelector`.
+
+```php
+class Location extends Petrelli\SearchInterfaceBuilder\SingleSelector
+```
+
+## Usage: Build a custom route for a specific filter
+
+Just overload the `buildRoute` function inside your filter class.
+
+```php
+public function buildRoute($extraParams)
+{
+
+    return route($this->route, request()->except(['page', $this->parameter]) + $extraParams);
+
+}
+```
+
 # TODO
 
-* Files Generator
 * Improve documentation
+* Examples
+* Tests
 
 # License
 

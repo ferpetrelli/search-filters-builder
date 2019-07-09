@@ -26,5 +26,15 @@
         "Petrelli\\SearchInterfaceBuilder\\": "src/"
       }
     },
+    "extra": {
+      "laravel": {
+        "providers": [
+          "Petrelli\\SearchInterfaceBuilder\\ServiceProvider"
+        ],
+        "aliases": {
+
+        }
+      }
+    },
     "minimum-stability": "stable"
 }

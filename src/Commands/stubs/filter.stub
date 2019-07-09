@@ -1,0 +1,32 @@
+<?php
+
+namespace App\Filters\Definitions;
+
+use \Petrelli\SearchInterfaceBuilder\MultipleSelector;
+
+
+class {{className}} extends MultipleSelector
+{
+
+	// URL parameter this filter will use
+    protected $parameter = '{{filterParameter}}';
+
+    // Filter title. You could also overload the `label()` function
+    protected $label = '{{className}}';
+
+
+    public function values()
+    {
+
+    	// Return an associative array with possible values
+    	//
+    	// ['value' => 'label', ... ]
+
+    	return [];
+
+    }
+
+
+}
+
+

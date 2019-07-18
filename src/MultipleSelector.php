@@ -89,12 +89,12 @@ class MultipleSelector
                 $input = $input->forget($input->search($key))->filter();
             } else {
                 // If this value is not contained, let's just add it so
-                // We build a link that inlcudes it to be selected
+                // We build a link that includes it to be selected
 
                 $input = $input->push($key)->filter();
             }
 
-            // ReBuild the parameters as comma separated values
+            // Re-build parameters as separated values (by separator attribute)
             $extraParams = $input->isEmpty() ? [] : [$this->parameter => join($this->separator, $input->toArray())];
 
             // Create a new filter item object containing all necessary data

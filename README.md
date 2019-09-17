@@ -162,6 +162,8 @@ Here you can adjust 3 things:
 
 Optional:
 
+* `$asArray`: Send this URL parameter as an array instead of a single string with a separator. By defaut is `false`.
+
 * `$separator`: character used to separate values on the URL. By defaut is `,`.
 
 

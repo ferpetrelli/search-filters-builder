@@ -22,6 +22,9 @@ class MultipleSelector
     // Base Collection Route to build
     protected $route;
 
+    // Instead of using a separator, build parameters as an array
+    protected $asArray = false;
+
     // Separator used to split each selected value
     protected $separator = ',';
 
@@ -79,8 +82,13 @@ class MultipleSelector
 
         foreach ($this->values() as $key => $label) {
 
-            // Values will be comma separated as specified on the API
-            $input = collect(explode($this->separator, request()->input($this->parameter)));
+            if ($this->asArray) {
+                // Values will come as an array
+                $input = collect(request()->input($this->parameter, []));
+            } else {
+                // Values will be separated in the same string
+                $input = collect(explode($this->separator, request()->input($this->parameter)));
+            }
 
             if ($active = $input->contains($key)) {
                 // If this value is contained in the input, remove it
@@ -95,7 +103,15 @@ class MultipleSelector
             }
 
             // Re-build parameters as separated values (by separator attribute)
-            $extraParams = $input->isEmpty() ? [] : [$this->parameter => join($this->separator, $input->toArray())];
+            if ($input->isEmpty()) {
+                $extraParams = [];
+            } else {
+                if ($this->asArray) {
+                    $extraParams = [$this->parameter => $input->toArray()];
+                } else {
+                    $extraParams = [$this->parameter => join($this->separator, $input->toArray())];
+                }
+            }
 
             // Create a new filter item object containing all necessary data
             // To build proper links
@@ -105,10 +121,6 @@ class MultipleSelector
             $object->active = $active;
             $object->url = $this->buildRoute($extraParams);
             $object->urlRoot = $this->buildRootRoute();
-
-            if (isset($this->checkbox) && $this->checkbox) {
-                $object->checkbox = true;
-            }
 
             $links->push($object);
         }

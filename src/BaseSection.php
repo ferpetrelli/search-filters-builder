@@ -41,6 +41,7 @@ class BaseSection
      */
     public function filters()
     {
+
         $filters = collect([]);
 
         foreach($this->filters as $klass) {
@@ -50,6 +51,7 @@ class BaseSection
         }
 
         return $filters;
+
     }
 
 
@@ -77,6 +79,7 @@ class BaseSection
      */
     public function activeFilters()
     {
+
         $activeFilters = collect([]);
 
         // Walk through filters and extract all active ones
@@ -89,6 +92,20 @@ class BaseSection
         }
 
         return $activeFilters;
+
+    }
+
+
+    /**
+    *
+    * Get the base route attribute
+    *
+    */
+    public function getRoute()
+    {
+
+        return $this->route;
+
     }
 
 
